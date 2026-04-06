@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Financial PDF Analyzer 1998</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <div class="window">
+      <div class="title-bar">
+        <span>Financial Intelligence Workstation v1.98</span>
+      </div>
+
+      <div class="toolbar">
+        <button disabled>File</button>
+        <button disabled>Edit</button>
+        <button disabled>View</button>
+        <button disabled>Tools</button>
+        <button disabled>Help</button>
+      </div>
+
+      <section class="content">
+        <h1>Upload Company Financial PDFs</h1>
+        <p>
+          Step 1: Upload one or many company financial PDF files.<br />
+          Step 2: AI reviews your files and returns an analysis report.
+        </p>
+
+        <form id="analyze-form" method="post" action="/analyze" enctype="multipart/form-data">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+
+          <label for="company_name">Company Name</label>
+          <input type="text" id="company_name" name="company_name" maxlength="120" required />
+
+          <label for="financial_pdfs">Financial PDFs (multiple allowed)</label>
+          <input type="file" id="financial_pdfs" name="financial_pdfs" accept="application/pdf,.pdf" multiple required />
+
+          <button type="submit" id="submit-button">Analyze PDFs</button>
+        </form>
+
+        <pre id="output" aria-live="polite">Awaiting upload...</pre>
+      </section>
+    </div>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
