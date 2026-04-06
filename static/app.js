@@ -14,7 +14,13 @@ form.addEventListener("submit", async (event) => {
       credentials: "same-origin",
     });
 
-    const payload = await response.json();
+    let payload;
+    try {
+      payload = await response.json();
+    } catch (parseError) {
+      output.textContent = `Error: Server returned invalid response (${response.status}). Please try again.`;
+      return;
+    }
 
     if (!response.ok) {
       output.textContent = `Error ${response.status}: ${payload.description || "Unknown error"}`;
