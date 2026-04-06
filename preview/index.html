@@ -3,24 +3,56 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Financial PDF Analyzer - Web Preview</title>
+    <title>Financial PDF Analyzer - 90s Retro Web Preview</title>
     <style>
-      body { font-family: Arial, sans-serif; margin: 2rem; line-height: 1.5; }
-      .note { border: 1px solid #ccc; padding: 1rem; background: #f7f7f7; }
-      code { background: #eee; padding: 0.2rem 0.4rem; }
+      body { font-family: Arial, sans-serif; margin: 2rem; line-height: 1.5; color: #333; }
+      .note { border: 1px solid #999; padding: 1rem; background: #f7f7f7; border-radius: 4px; }
+      code { background: #e8e8e8; padding: 0.2rem 0.4rem; font-family: monospace; }
+      a { color: #0066cc; text-decoration: none; }
+      a:hover { text-decoration: underline; }
     </style>
   </head>
   <body>
-    <h1>Financial PDF Analyzer (Preview)</h1>
-    <p>This GitHub Pages site is a static preview only.</p>
+    <h1>📊 Financial PDF Analyzer</h1>
+    <p><strong>90s-style retro web app</strong> for uploading company financial PDFs and receiving AI-generated analysis.</p>
+    
     <div class="note">
-      <strong>Why preview only?</strong>
+      <strong>🔍 This is a Static Preview</strong>
       <p>
-        GitHub Pages cannot run Flask/Python backends, so PDF upload processing and Gemini analysis are not available here.
+        GitHub Pages cannot run Flask/Python backends. The full application with PDF upload and Gemini AI analysis requires a backend server.
       </p>
       <p>
-        Run the full app in GitHub Codespaces and open forwarded port <code>8000</code>.
+        <strong>To run the full app:</strong>
       </p>
+      <ol>
+        <li>Go to <a href="https://github.com/learnrahulrai-ui/a" target="_blank">repository</a></li>
+        <li>Click <code>Code → Codespaces → Create codespace on branch</code></li>
+        <li>In the terminal, run:
+          <pre>export GEMINI_API_KEY="your-key"<br/>python app.py</pre>
+        </li>
+        <li>Open the forwarded port <code>8000</code> in your browser</li>
+      </ol>
+    </div>
+
+    <div class="note">
+      <strong>✨ Features</strong>
+      <ul>
+        <li>Multi-file PDF upload (up to 40 files, 15 MB each)</li>
+        <li>Server-side PDF validation (magic bytes + size checks)</li>
+        <li>CSRF protection & rate limiting</li>
+        <li>Secure security headers (CSP, X-Frame-Options)</li>
+        <li>AI financial analysis via Google Gemini</li>
+        <li>Temporary file storage (auto-deleted)</li>
+      </ul>
+    </div>
+
+    <div class="note">
+      <strong>📚 Resources</strong>
+      <ul>
+        <li><a href="https://github.com/learnrahulrai-ui/a" target="_blank">GitHub Repository</a></li>
+        <li><a href="https://github.com/learnrahulrai-ui/a/blob/main/README.md" target="_blank">Documentation</a></li>
+        <li><a href="https://github.com/learnrahulrai-ui/a/blob/main/.github/skills/financial-pdf-analyzer-development/SKILL.md" target="_blank">Development Guide</a></li>
+      </ul>
     </div>
   </body>
 </html>
