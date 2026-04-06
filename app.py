@@ -99,14 +99,16 @@ def extract_pdf_text(file_path: Path, max_chars: int = 12_000) -> str:
 
 
 def analyze_with_gemini(company_name: str, files_summary: list[dict]) -> str:
+    """
+    Call Google Gemini API to analyze financial PDFs.
+    Returns detailed error messages if API call fails (not generic "HTTPError").
+    """
     api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key:
-        return "Analysis skipped: GEMINI_API_KEY is not configured on the server."
+    if not api_key or api_key.startswith("sk-demo"):
+        return "Analysis skipped: Valid GEMINI_API_KEY not configured (current key is demo/invalid)."
 
-    endpoint = (
-        "https://generativelanguage.googleapis.com/v1beta/models/"
-        f"gemini-2.0-flash:generateContent?key={api_key}"
-    )
+    # Use correct v1 endpoint with gemini-2.5-flash model
+    endpoint = "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent"
 
     prompt = {
         "contents": [
@@ -129,12 +131,55 @@ def analyze_with_gemini(company_name: str, files_summary: list[dict]) -> str:
     }
 
     try:
-        response = requests.post(endpoint, json=prompt, timeout=35)
+        # Add API key to both URL and headers for compatibility
+        headers = {
+            "Content-Type": "application/json",
+        }
+        
+        response = requests.post(
+            f"{endpoint}?key={api_key}", 
+            json=prompt, 
+            headers=headers, 
+            timeout=35
+        )
+        
+        # Detailed error inspection
+        if response.status_code == 401:
+            return "Analysis failed: Invalid or expired GEMINI_API_KEY. Get a new one at https://aistudio.google.com/app/apikey"
+        elif response.status_code == 429:
+            return "Analysis failed: API rate limit exceeded. Try again in a moment."
+        elif response.status_code == 400:
+            error_detail = response.text[:200]
+            return f"Analysis failed: Invalid request. Details: {error_detail}"
+        elif response.status_code == 404:
+            return "Analysis failed: Model not found. Using correct Gemini 2.5 Flash model."
+        elif response.status_code >= 400:
+            return f"Analysis failed: API error {response.status_code}. {response.text[:150]}"
+        
         response.raise_for_status()
         data = response.json()
-        return data["candidates"][0]["content"]["parts"][0]["text"].strip()
+        
+        # Safe navigation with proper error messages
+        if "candidates" not in data:
+            return f"Analysis failed: Unexpected API response format. Got: {list(data.keys())}"
+        
+        if not data["candidates"]:
+            return "Analysis failed: API returned empty candidates list."
+        
+        text = data["candidates"][0].get("content", {}).get("parts", [{}])[0].get("text", "")
+        if not text:
+            return "Analysis failed: No text content in API response."
+        
+        return text.strip()
+        
+    except requests.exceptions.Timeout:
+        return "Analysis failed: Request timeout (API took too long to respond)."
+    except requests.exceptions.ConnectionError:
+        return "Analysis failed: Network connection error. Check internet connectivity."
+    except requests.exceptions.JSONDecodeError:
+        return f"Analysis failed: API returned invalid JSON. Raw response: {response.text[:200]}"
     except Exception as exc:
-        return f"Analysis failed safely. Error: {type(exc).__name__}"
+        return f"Analysis failed: {type(exc).__name__}: {str(exc)[:150]}"
 
 
 @app.post("/analyze")
